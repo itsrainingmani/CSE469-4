@@ -30,6 +30,25 @@ def gini_calc(outlook, key, vals):
         ogini += ((denom[i]/14)*(ginicalc[i]))
     print ogini
 
+def samelabel(attr, label, key):
+    initVal = label[0]
+    endVal = label[0]
+    for i in range(0, len(attr)):
+        if (attr[i] == key):
+            endVal = label[i]
+    if (initVal == endVal):
+        print "This is a leaf node " + key + " and the outcome is " + initVal
+    return (initVal == endVal)
+
+def majorityrules(attr, label, labelname, key):
+    arr = [0, 0]
+    for i in range(0, len(attr)):
+        if attr[i] == key:
+            for j in range(0, len(labelname)):
+                if (label[i] == labelname[j]):
+                    arr[j] += 1
+    print "The leaf " + key + " has a value " + labelname.index(max(arr))
+
 def gini(ginidict, attributes, attrnames):
     cgini = ginidict
     cattr = attributes
@@ -47,18 +66,20 @@ def gini(ginidict, attributes, attrnames):
 
     print "the minimum GINI value is " + minkey + " so we split on it"
 
-    arr = []
-
-    for i in range(0, len(cnames)):
-        arr.append(cgini[cnames[i]])
-    arr.append(cgini['label'])
-
     recurdict = {}
     for i in cattr[minkey]:
         recurdict = deepcopy(cgini)
         recurattr = deepcopy(cattr)
         recurnname = deepcopy(cnames)
         removelist = []
+
+        if (len(cgini) == 2):
+            majorityrules(recurdict[minkey], recurdict['label'], recurattr['label'] i)
+            return
+
+        if samelabel(recurdict[minkey], recurdict['label'], i) == true:
+            return
+
         for j in range(0, len(recurdict[minkey])):
             if (recurdict[minkey][j] == i):
                 removelist.append(j)
@@ -68,7 +89,6 @@ def gini(ginidict, attributes, attrnames):
         del recurattr[minkey]
         recurnname.remove(minkey)
         gini(recurdict, recurattr, recurnname)
-
 
 with open("golf.csv", 'rb') as csvfile:
     golfReader = csv.reader(csvfile, delimiter=',')
@@ -90,3 +110,5 @@ attr["windy"] = ["True", "False"]
 attr["label"] = ["Yes", "No"]
 
 attrnames = ["outlook", "humid", "temp", "windy"]
+
+gini(ddict, attr, attrnames)
